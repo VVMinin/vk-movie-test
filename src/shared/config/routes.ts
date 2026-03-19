@@ -4,3 +4,5 @@ export const routePaths = {
   favorites: '/favorites',
   compare: '/compare',
 }
+
+export const getMovieDetailsPath = (id: number) => `/movie/${id}`
