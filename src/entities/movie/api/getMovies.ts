@@ -7,10 +7,17 @@ type GetMoviesParams = {
   limit?: number
 }
 
+export type GetMoviesResult = {
+  movies: Movie[]
+  page: number
+  pages: number
+  total: number
+}
+
 export const getMovies = async ({
   page = 1,
   limit = 50,
-}: GetMoviesParams = {}): Promise<Movie[]> => {
+}: GetMoviesParams = {}): Promise<GetMoviesResult> => {
   const { data } = await apiClient.get<MoviesApiResponse>('/movie', {
     params: {
       page,
@@ -18,5 +25,10 @@ export const getMovies = async ({
     },
   })
 
-  return data.docs.map(mapMovieFromApi)
+  return {
+    movies: data.docs.map(mapMovieFromApi),
+    page: data.page,
+    pages: data.pages,
+    total: data.total,
+  }
 }

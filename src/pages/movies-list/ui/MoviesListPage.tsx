@@ -1,45 +1,97 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { getMovies, MovieCard, type Movie } from '@/entities'
 import { toApiError } from '@/shared/api/client'
 
+const pageSize = 50
+
 export const MoviesListPage = () => {
   const [movies, setMovies] = useState<Movie[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [pagesCount, setPagesCount] = useState(1)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [loadMoreError, setLoadMoreError] = useState<string | null>(null)
+  const loadTriggerRef = useRef<HTMLDivElement | null>(null)
+  const isRequestInFlightRef = useRef(false)
 
-  useEffect(() => {
-    let isMounted = true
+  const hasMore = page < pagesCount
 
-    const fetchMovies = async () => {
-      setIsLoading(true)
-      setError(null)
+  const loadPage = useCallback(
+    async (nextPage: number) => {
+      if (isRequestInFlightRef.current) {
+        return
+      }
+
+      isRequestInFlightRef.current = true
 
       try {
-        const data = await getMovies()
-
-        if (isMounted) {
-          setMovies(data)
+        if (nextPage === 1) {
+          setIsInitialLoading(true)
+          setError(null)
+        } else {
+          setIsLoadingMore(true)
+          setLoadMoreError(null)
         }
+
+        const data = await getMovies({ page: nextPage, limit: pageSize })
+
+        if (nextPage === 1) {
+          setMovies(data.movies)
+        } else {
+          setMovies((prevMovies) => [...prevMovies, ...data.movies])
+        }
+
+        setPage(data.page)
+        setPagesCount(data.pages)
       } catch (requestError) {
-        if (isMounted) {
-          const apiError = toApiError(requestError)
+        const apiError = toApiError(requestError)
+
+        if (nextPage === 1) {
           setError(apiError.message)
+        } else {
+          setLoadMoreError(apiError.message)
         }
       } finally {
-        if (isMounted) {
-          setIsLoading(false)
-        }
+        setIsInitialLoading(false)
+        setIsLoadingMore(false)
+        isRequestInFlightRef.current = false
       }
+    },
+    [],
+  )
+
+  useEffect(() => {
+    loadPage(1)
+  }, [loadPage])
+
+  useEffect(() => {
+    if (!loadTriggerRef.current || !hasMore) {
+      return
     }
 
-    fetchMovies()
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const firstEntry = entries[0]
+        if (!firstEntry.isIntersecting || isRequestInFlightRef.current) {
+          return
+        }
+
+        loadPage(page + 1)
+      },
+      {
+        rootMargin: '300px 0px',
+      },
+    )
+
+    observer.observe(loadTriggerRef.current)
 
     return () => {
-      isMounted = false
+      observer.disconnect()
     }
-  }, [])
+  }, [hasMore, loadPage, page])
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return (
       <>
         <h1 className="page-title">Список фильмов</h1>
@@ -74,6 +126,9 @@ export const MoviesListPage = () => {
           <MovieCard key={movie.id} movie={movie} />
         ))}
       </section>
+      {loadMoreError && <p className="page-error">Ошибка подгрузки: {loadMoreError}</p>}
+      {hasMore && <div className="list-loader-trigger" ref={loadTriggerRef} />}
+      {isLoadingMore && <p className="page-hint">Подгружаем еще фильмы...</p>}
     </>
   )
 }
