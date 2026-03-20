@@ -133,6 +133,61 @@ a {
   cursor: pointer;
 }
 
+.button--primary {
+  background: #111827;
+  color: #fff;
+  border-color: #111827;
+}
+
+.movie-tile {
+  display: grid;
+  gap: 8px;
+}
+
+.movie-tile__actions {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+}
+
+.favorite-state {
+  color: #065f46;
+  font-size: 14px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 20;
+  padding: 16px;
+}
+
+.modal {
+  width: min(420px, 100%);
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.modal__title {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.modal__text {
+  margin: 0 0 14px;
+  color: #4b5563;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .movies-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
@@ -238,4 +293,8 @@ a {
 
 .movie-details__meta dd {
   margin: 0;
+}
+
+.movie-details__actions {
+  margin-bottom: 16px;
 }

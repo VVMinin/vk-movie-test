@@ -41,7 +41,7 @@ export const getMovies = async ({
     params.year = `${filters.yearFrom}-${new Date().getFullYear()}`
   }
 
-  const { data } = await apiClient.get<MoviesApiResponse>('/movie', {
+  const { data } = await apiClient.get<MoviesApiResponse>('/v1.4/movie', {
     params,
   })
 

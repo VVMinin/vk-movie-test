@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { getMovieGenres, getMovies, MovieCard, type Movie } from '@/entities'
 import {
+  AddToFavoritesButton,
   buildSearchParamsFromFilters,
   defaultMovieFilters,
   MovieFilters,
@@ -192,7 +193,12 @@ export const MoviesListPage = () => {
       </div>
       <section className="movies-grid">
         {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
+          <div key={movie.id} className="movie-tile">
+            <MovieCard movie={movie} />
+            <div className="movie-tile__actions">
+              <AddToFavoritesButton movie={movie} />
+            </div>
+          </div>
         ))}
       </section>
       {loadMoreError && <p className="page-error">Ошибка подгрузки: {loadMoreError}</p>}

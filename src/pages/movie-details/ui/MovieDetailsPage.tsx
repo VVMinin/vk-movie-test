@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getMovieById, type Movie } from '@/entities'
+import { AddToFavoritesButton } from '@/features'
 import { routePaths } from '@/shared/config/routes'
 import { toApiError } from '@/shared/api/client'
 
@@ -95,6 +96,9 @@ export const MovieDetailsPage = () => {
             <dd>{movie.genres.length ? movie.genres.join(', ') : '—'}</dd>
           </div>
         </dl>
+        <div className="movie-details__actions">
+          <AddToFavoritesButton movie={movie} />
+        </div>
         <p>
           <Link to={routePaths.home}>Назад к списку</Link>
         </p>

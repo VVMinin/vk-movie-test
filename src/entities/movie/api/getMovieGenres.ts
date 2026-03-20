@@ -5,7 +5,7 @@ type GenreItem = {
 }
 
 export const getMovieGenres = async (): Promise<string[]> => {
-  const { data } = await apiClient.get<GenreItem[]>('/movie/possible-values-by-field', {
+  const { data } = await apiClient.get<GenreItem[]>('/v1/movie/possible-values-by-field', {
     params: {
       field: 'genres.name',
     },

@@ -9,7 +9,23 @@ if (!apiKey) {
   throw new Error('VITE_KINOPOISK_API_KEY is not set')
 }
 
+const normalizeApiRootUrl = (value: string) => {
+  const withoutVersion = value.replace(/\/v1(\.4)?\/?$/, '')
+  try {
+    const parsedUrl = new URL(withoutVersion)
+    if (parsedUrl.hostname === 'api.kinopoisk.dev') {
+      parsedUrl.hostname = 'api.poiskkino.dev'
+    }
+
+    return `${parsedUrl.origin}${parsedUrl.pathname}`.replace(/\/$/, '')
+  } catch {
+    return withoutVersion
+  }
+}
+
+const apiRootUrl = normalizeApiRootUrl(apiUrl)
+
 export const env = {
-  apiUrl,
+  apiRootUrl,
   apiKey,
 }

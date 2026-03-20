@@ -1,5 +1,10 @@
 import { AppRouter } from './providers/router'
+import { FavoritesProvider } from '@/features'
 
 export const App = () => {
-  return <AppRouter />
+  return (
+    <FavoritesProvider>
+      <AppRouter />
+    </FavoritesProvider>
+  )
 }

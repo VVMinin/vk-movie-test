@@ -4,21 +4,27 @@ const clamp = (value: number, min: number, max: number) => {
   return Math.min(Math.max(value, min), max)
 }
 
+const parseNumberParam = (searchParams: URLSearchParams, key: string) => {
+  const rawValue = searchParams.get(key)
+  if (rawValue === null || rawValue.trim() === '') {
+    return null
+  }
+
+  const parsedValue = Number(rawValue)
+  return Number.isFinite(parsedValue) ? parsedValue : null
+}
+
 export const parseFiltersFromSearchParams = (searchParams: URLSearchParams): MovieFilters => {
   const genres = searchParams.getAll('genre').filter(Boolean)
-  const ratingFrom = Number(searchParams.get('ratingFrom'))
-  const ratingTo = Number(searchParams.get('ratingTo'))
-  const yearFrom = Number(searchParams.get('yearFrom'))
+  const ratingFrom = parseNumberParam(searchParams, 'ratingFrom')
+  const ratingTo = parseNumberParam(searchParams, 'ratingTo')
+  const yearFrom = parseNumberParam(searchParams, 'yearFrom')
 
   return {
     genres,
-    ratingFrom: Number.isFinite(ratingFrom)
-      ? clamp(ratingFrom, 1, 10)
-      : defaultMovieFilters.ratingFrom,
-    ratingTo: Number.isFinite(ratingTo) ? clamp(ratingTo, 1, 10) : defaultMovieFilters.ratingTo,
-    yearFrom: Number.isFinite(yearFrom)
-      ? clamp(yearFrom, 1990, new Date().getFullYear())
-      : defaultMovieFilters.yearFrom,
+    ratingFrom: ratingFrom !== null ? clamp(ratingFrom, 1, 10) : defaultMovieFilters.ratingFrom,
+    ratingTo: ratingTo !== null ? clamp(ratingTo, 1, 10) : defaultMovieFilters.ratingTo,
+    yearFrom: yearFrom !== null ? clamp(yearFrom, 1990, new Date().getFullYear()) : defaultMovieFilters.yearFrom,
   }
 }
 
