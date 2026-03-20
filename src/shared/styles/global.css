@@ -65,6 +65,74 @@ a {
   color: #b91c1c;
 }
 
+.filters {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.filters__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filters__row--genres {
+  align-items: flex-start;
+}
+
+.filters__label {
+  width: 80px;
+  color: #374151;
+  font-size: 14px;
+}
+
+.filters__range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filters input[type='number'] {
+  width: 82px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+.filters__genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  max-height: 132px;
+  overflow: auto;
+}
+
+.filters__genre {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 14px;
+  color: #374151;
+}
+
+.filters-actions {
+  margin-bottom: 12px;
+}
+
+.button {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  color: #111827;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
 .movies-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));

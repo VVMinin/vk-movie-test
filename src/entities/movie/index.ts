@@ -1,4 +1,5 @@
 export { getMovies } from './api/getMovies'
+export { getMovieGenres } from './api/getMovieGenres'
 export { MovieCard } from './ui/MovieCard'
 export { mapMovieFromApi } from './model/mappers'
 export type { GetMoviesResult } from './api/getMovies'

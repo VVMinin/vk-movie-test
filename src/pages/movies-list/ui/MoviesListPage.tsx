@@ -1,11 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { getMovies, MovieCard, type Movie } from '@/entities'
+import { useSearchParams } from 'react-router-dom'
+import { getMovieGenres, getMovies, MovieCard, type Movie } from '@/entities'
+import {
+  buildSearchParamsFromFilters,
+  defaultMovieFilters,
+  MovieFilters,
+  parseFiltersFromSearchParams,
+  type MovieFiltersValue,
+} from '@/features'
 import { toApiError } from '@/shared/api/client'
 
 const pageSize = 50
 
 export const MoviesListPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [movies, setMovies] = useState<Movie[]>([])
+  const [genres, setGenres] = useState<string[]>([])
+  const [filters, setFilters] = useState<MovieFiltersValue>(() =>
+    parseFiltersFromSearchParams(searchParams),
+  )
   const [page, setPage] = useState(1)
   const [pagesCount, setPagesCount] = useState(1)
   const [isInitialLoading, setIsInitialLoading] = useState(true)
@@ -14,8 +27,33 @@ export const MoviesListPage = () => {
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null)
   const loadTriggerRef = useRef<HTMLDivElement | null>(null)
   const isRequestInFlightRef = useRef(false)
+  const searchParamsString = searchParams.toString()
 
   const hasMore = page < pagesCount
+
+  useEffect(() => {
+    setFilters(parseFiltersFromSearchParams(new URLSearchParams(searchParamsString)))
+  }, [searchParamsString])
+
+  useEffect(() => {
+    const nextSearchParams = buildSearchParamsFromFilters(filters)
+    if (nextSearchParams.toString() !== searchParamsString) {
+      setSearchParams(nextSearchParams, { replace: true })
+    }
+  }, [filters, searchParamsString, setSearchParams])
+
+  useEffect(() => {
+    const loadGenres = async () => {
+      try {
+        const data = await getMovieGenres()
+        setGenres(data)
+      } catch {
+        setGenres([])
+      }
+    }
+
+    loadGenres()
+  }, [])
 
   const loadPage = useCallback(
     async (nextPage: number) => {
@@ -34,7 +72,11 @@ export const MoviesListPage = () => {
           setLoadMoreError(null)
         }
 
-        const data = await getMovies({ page: nextPage, limit: pageSize })
+        const data = await getMovies({
+          page: nextPage,
+          limit: pageSize,
+          filters,
+        })
 
         if (nextPage === 1) {
           setMovies(data.movies)
@@ -58,7 +100,7 @@ export const MoviesListPage = () => {
         isRequestInFlightRef.current = false
       }
     },
-    [],
+    [filters],
   )
 
   useEffect(() => {
@@ -121,6 +163,33 @@ export const MoviesListPage = () => {
   return (
     <>
       <h1 className="page-title">Список фильмов</h1>
+      <MovieFilters
+        genres={genres}
+        value={filters}
+        onChange={(nextFilters) => {
+          const normalizedFilters: MovieFiltersValue = {
+            genres: nextFilters.genres,
+            ratingFrom: Math.max(1, Math.min(10, nextFilters.ratingFrom)),
+            ratingTo: Math.max(1, Math.min(10, nextFilters.ratingTo)),
+            yearFrom: Math.max(1990, Math.min(new Date().getFullYear(), nextFilters.yearFrom)),
+          }
+
+          if (normalizedFilters.ratingFrom > normalizedFilters.ratingTo) {
+            normalizedFilters.ratingTo = normalizedFilters.ratingFrom
+          }
+
+          setFilters(normalizedFilters)
+        }}
+      />
+      <div className="filters-actions">
+        <button
+          type="button"
+          className="button"
+          onClick={() => setFilters(defaultMovieFilters)}
+        >
+          Сбросить фильтры
+        </button>
+      </div>
       <section className="movies-grid">
         {movies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
