@@ -77,3 +77,5 @@ VITE_KINOPOISK_API_KEY=Получить ключ можно здесь https://p
 
 - На стороне API бывают ограничения по rate-limit.
 - В некоторых сценариях API может возвращать пустой результат для узких фильтров.
+
+Live-demo: https://vvminin.github.io/vk-movie-test/
