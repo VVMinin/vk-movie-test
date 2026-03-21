@@ -67,7 +67,8 @@ npm run dev
 
 ```env
 VITE_KINOPOISK_API_URL=https://api.kinopoisk.dev/v1.4
-VITE_KINOPOISK_API_KEY=NX02779-71C4NMR-K9C7359-V45SSE6
+VITE_KINOPOISK_API_KEY=Получить ключ можно здесь https://poiskkino.dev/
+мой ключ вшит в демо
 ```
 
 
