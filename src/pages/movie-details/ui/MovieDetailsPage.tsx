@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getMovieById, type Movie } from '@/entities'
-import { AddToFavoritesButton } from '@/features'
+import { AddToCompareButton, AddToFavoritesButton } from '@/features'
 import { routePaths } from '@/shared/config/routes'
 import { toApiError } from '@/shared/api/client'
 
@@ -98,6 +98,7 @@ export const MovieDetailsPage = () => {
         </dl>
         <div className="movie-details__actions">
           <AddToFavoritesButton movie={movie} />
+          <AddToCompareButton movie={movie} />
         </div>
         <p>
           <Link to={routePaths.home}>Назад к списку</Link>

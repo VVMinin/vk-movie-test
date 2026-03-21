@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { getMovieGenres, getMovies, MovieCard, type Movie } from '@/entities'
 import {
+  AddToCompareButton,
   AddToFavoritesButton,
   buildSearchParamsFromFilters,
   defaultMovieFilters,
@@ -197,6 +198,7 @@ export const MoviesListPage = () => {
             <MovieCard movie={movie} />
             <div className="movie-tile__actions">
               <AddToFavoritesButton movie={movie} />
+              <AddToCompareButton movie={movie} />
             </div>
           </div>
         ))}

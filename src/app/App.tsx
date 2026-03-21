@@ -1,10 +1,12 @@
 import { AppRouter } from './providers/router'
-import { FavoritesProvider } from '@/features'
+import { CompareProvider, FavoritesProvider } from '@/features'
 
 export const App = () => {
   return (
     <FavoritesProvider>
-      <AppRouter />
+      <CompareProvider>
+        <AppRouter />
+      </CompareProvider>
     </FavoritesProvider>
   )
 }

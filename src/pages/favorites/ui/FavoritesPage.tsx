@@ -1,5 +1,5 @@
 import { MovieCard } from '@/entities'
-import { RemoveFromFavoritesButton, useFavorites } from '@/features'
+import { AddToCompareButton, RemoveFromFavoritesButton, useFavorites } from '@/features'
 
 export const FavoritesPage = () => {
   const { favorites } = useFavorites()
@@ -22,6 +22,7 @@ export const FavoritesPage = () => {
             <MovieCard movie={movie} />
             <div className="movie-tile__actions">
               <RemoveFromFavoritesButton movieId={movie.id} />
+              <AddToCompareButton movie={movie} />
             </div>
           </div>
         ))}
