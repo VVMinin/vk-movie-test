@@ -63,8 +63,8 @@ npm run dev
 `.env.default`:
 
 ```env
-VITE_KINOPOISK_API_URL=https://api.poiskkino.dev
-VITE_KINOPOISK_API_KEY=YOUR_API_KEY
+VITE_KINOPOISK_API_URL=https://api.kinopoisk.dev/v1.4
+VITE_KINOPOISK_API_KEY=NX02779-71C4NMR-K9C7359-V45SSE6
 ```
 
 ## Известные ограничения API
@@ -72,10 +72,4 @@ VITE_KINOPOISK_API_KEY=YOUR_API_KEY
 - На стороне API бывают ограничения по rate-limit.
 - В некоторых сценариях API может возвращать пустой результат для узких фильтров.
 
-## Репозиторий
 
-- GitHub: <https://github.com/VVMinin/vk-movie-test>
-
-## Live demo
-
-- Пока не развернуто.
