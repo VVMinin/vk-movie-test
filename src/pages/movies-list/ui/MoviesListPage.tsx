@@ -26,7 +26,9 @@ export const MoviesListPage = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [genresError, setGenresError] = useState<string | null>(null)
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null)
+  const [total, setTotal] = useState(0)
   const loadTriggerRef = useRef<HTMLDivElement | null>(null)
   const isRequestInFlightRef = useRef(false)
   const searchParamsString = searchParams.toString()
@@ -49,8 +51,10 @@ export const MoviesListPage = () => {
       try {
         const data = await getMovieGenres()
         setGenres(data)
+        setGenresError(null)
       } catch {
         setGenres([])
+        setGenresError('Не удалось загрузить список жанров')
       }
     }
 
@@ -88,6 +92,7 @@ export const MoviesListPage = () => {
 
         setPage(data.page)
         setPagesCount(data.pages)
+        setTotal(data.total)
       } catch (requestError) {
         const apiError = toApiError(requestError)
 
@@ -135,33 +140,6 @@ export const MoviesListPage = () => {
     }
   }, [hasMore, loadPage, page])
 
-  if (isInitialLoading) {
-    return (
-      <>
-        <h1 className="page-title">Список фильмов</h1>
-        <p className="page-hint">Загружаем фильмы...</p>
-      </>
-    )
-  }
-
-  if (error) {
-    return (
-      <>
-        <h1 className="page-title">Список фильмов</h1>
-        <p className="page-error">Не удалось загрузить фильмы: {error}</p>
-      </>
-    )
-  }
-
-  if (movies.length === 0) {
-    return (
-      <>
-        <h1 className="page-title">Список фильмов</h1>
-        <p className="page-hint">По вашему запросу ничего не найдено</p>
-      </>
-    )
-  }
-
   return (
     <>
       <h1 className="page-title">Список фильмов</h1>
@@ -183,6 +161,7 @@ export const MoviesListPage = () => {
           setFilters(normalizedFilters)
         }}
       />
+      {genresError && <p className="page-hint">{genresError}</p>}
       <div className="filters-actions">
         <button
           type="button"
@@ -192,20 +171,53 @@ export const MoviesListPage = () => {
           Сбросить фильтры
         </button>
       </div>
-      <section className="movies-grid">
-        {movies.map((movie) => (
-          <div key={movie.id} className="movie-tile">
-            <MovieCard movie={movie} />
-            <div className="movie-tile__actions">
-              <AddToFavoritesButton movie={movie} />
-              <AddToCompareButton movie={movie} />
-            </div>
+      {isInitialLoading && <p className="page-hint">Загружаем фильмы...</p>}
+      {!isInitialLoading && error && (
+        <>
+          <p className="page-error">Не удалось загрузить фильмы: {error}</p>
+          <div className="page-actions">
+            <button type="button" className="button" onClick={() => loadPage(1)}>
+              Повторить
+            </button>
           </div>
-        ))}
-      </section>
-      {loadMoreError && <p className="page-error">Ошибка подгрузки: {loadMoreError}</p>}
-      {hasMore && <div className="list-loader-trigger" ref={loadTriggerRef} />}
-      {isLoadingMore && <p className="page-hint">Подгружаем еще фильмы...</p>}
+        </>
+      )}
+      {!isInitialLoading && !error && movies.length === 0 && (
+        <p className="page-hint">По вашему запросу ничего не найдено</p>
+      )}
+      {!error && movies.length > 0 && (
+        <>
+          <p className="page-hint">Найдено фильмов: {total}</p>
+          <section className="movies-grid">
+            {movies.map((movie) => (
+              <div key={movie.id} className="movie-tile">
+                <MovieCard movie={movie} />
+                <div className="movie-tile__actions">
+                  <AddToFavoritesButton movie={movie} />
+                  <AddToCompareButton movie={movie} />
+                </div>
+              </div>
+            ))}
+          </section>
+        </>
+      )}
+      {loadMoreError && (
+        <div className="page-actions">
+          <p className="page-error">Ошибка подгрузки: {loadMoreError}</p>
+          <button type="button" className="button" onClick={() => loadPage(page + 1)}>
+            Попробовать еще раз
+          </button>
+        </div>
+      )}
+      {hasMore && !error && (
+        <div className="list-loader-trigger" ref={loadTriggerRef} />
+      )}
+      {isLoadingMore && (
+        <p className="page-hint">Подгружаем еще фильмы...</p>
+      )}
+      {!hasMore && !error && movies.length > 0 && (
+        <p className="page-hint">Дальше фильмов нет</p>
+      )}
     </>
   )
 }
