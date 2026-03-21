@@ -8,7 +8,7 @@ import { ComparePage } from '@/pages/compare'
 
 export const AppRouter = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route element={<MainLayout />}>
           <Route path={routePaths.home} element={<MoviesListPage />} />
